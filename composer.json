@@ -1,0 +1,14 @@
+{
+  "name": "assignment/secure-chat",
+  "description": "Secure PHP/MySQL/WebSocket chat assignment",
+  "type": "project",
+  "require": {
+    "php": "^8.2",
+    "cboden/ratchet": "^0.4.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "SecureChat\\": "app/"
+    }
+  }
+}
