@@ -15,8 +15,24 @@ $file = $stmt->fetch();
 if (!$file || ($userId !== (int)$file['sender_id'] && $userId !== (int)$file['receiver_id'])) {
     http_response_code(404); exit('Not found');
 }
-$path = '/var/www/storage/uploads/' . $file['stored_name'];
-if (!is_file($path)) { http_response_code(404); exit('Not found'); }
+$uploadRoot = realpath('/var/www/storage/uploads');
+
+if ($uploadRoot === false) {
+    http_response_code(500);
+    exit('Storage unavailable');
+}
+
+$path = realpath($uploadRoot . DIRECTORY_SEPARATOR . $file['stored_name']);
+
+if (
+    $path === false ||
+    !str_starts_with($path, $uploadRoot . DIRECTORY_SEPARATOR) ||
+    !is_file($path)
+) {
+    http_response_code(404);
+    exit('Not found');
+}
+
 $inlineRequested = ($_GET['inline'] ?? '') === '1';
 $inlineAllowed = str_starts_with((string)$file['mime_type'], 'image/');
 $disposition = ($inlineRequested && $inlineAllowed) ? 'inline' : 'attachment';
